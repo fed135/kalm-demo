@@ -1,0 +1,27 @@
+{
+  "name": "kalm-demo",
+  "version": "1.0.0",
+  "description": "An app to demo the power of Kalm",
+  "main": "./index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fed135/kalm-demo.git"
+  },
+  "keywords": [
+    "kalm",
+    "demo"
+  ],
+  "author": "frederic charette <fredericcharette@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/fed135/kalm-demo/issues"
+  },
+  "homepage": "https://github.com/fed135/kalm-demo#readme",
+  "dependencies": {
+    "kalm": "0.2.x",
+    "kalm-websocket": "1.0.x"
+  }
+}
