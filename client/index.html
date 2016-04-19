@@ -3,6 +3,7 @@
 <script src="./kalm-websocket.min.js"></script>
 <script>
 	require(['kalm', 'kalm-websocket'], function(Kalm, ws) {
+
 		Kalm.adapters.register('ws', ws);
 
     var client = new Kalm.Client({
@@ -11,16 +12,19 @@
 	    adapter: 'ws',
 	    channels: {
 		    positionEvent: function(data, socket) {
+		    	console.log('got event');
 			    // Need to update the position of user X to position Y 
 		    },
 		    handshake: function(data) {
 		    	// Client gets assigned an id when connecting to the server
     			client.id = data;
+    			console.log('You are client #' + client.id);
     		}
 		  }
     });
 
     window.addEventListener('mousemove', function(event) {
+    	console.log('sending event');
     	client.send('positionEvent', {
     		id: client.id,
     		x: event.clientX,
