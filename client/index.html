@@ -1,0 +1,31 @@
+<script src="./require.js"></script>
+<script src="./kalm.min.js"></script>
+<script src="./kalm-websocket.min.js"></script>
+<script>
+	require(['kalm', 'kalm-websocket'], function(Kalm, ws) {
+		Kalm.adapters.register('ws', ws);
+
+    var client = new Kalm.Client({
+	    hostname: 'http://127.0.0.1',	// Put your server addr
+	    port: 3000,
+	    adapter: 'ws',
+	    channels: {
+		    positionEvent: function(data, socket) {
+			    // Need to update the position of user X to position Y 
+		    },
+		    handshake: function(data) {
+		    	// Client gets assigned an id when connecting to the server
+    			client.id = data;
+    		}
+		  }
+    });
+
+    window.addEventListener('mousemove', function(event) {
+    	client.send('positionEvent', {
+    		id: client.id,
+    		x: event.clientX,
+    		y: event.clientY
+    	});
+    });
+	});
+</script>
