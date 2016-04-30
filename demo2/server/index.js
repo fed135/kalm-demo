@@ -6,8 +6,10 @@
 
 /* Requires ------------------------------------------------------------------*/
 
-var Kalm = require('kalm');
-var ws = require('kalm-websocket');
+//var Kalm = require('kalm');
+//var ws = require('kalm-websocket');
+var Kalm = require('/home/frederic/Documents/workspace/Kalm');
+var ws = require('/home/frederic/Documents/workspace/kalm-websocket');
 
 /* Methods -------------------------------------------------------------------*/
 

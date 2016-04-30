@@ -4,8 +4,7 @@
   "description": "An app to demo the power of Kalm",
   "main": "./index.js",
   "scripts": {
-    "demo1": "node demo1/index.js",
-    "demo2": "node demo2/index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

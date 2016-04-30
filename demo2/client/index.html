@@ -1,0 +1,64 @@
+<canvas id="canvas" style="width:100%;height:100%;position:absolute;top:0;bottom:0;left:0;right:0;"></canvas>
+
+<script src="../../libs/require.js"></script>
+<script src="../../libs/kalm.min.js"></script>
+<script src="../../libs/kalm-websocket.min.js"></script>
+<script>
+	require(['kalm', 'kalm-websocket'], function(Kalm, ws) {
+
+		var canvas = document.getElementById('canvas');
+		var ctx = canvas.getContext('2d');
+		
+		var fingerPositions = {};
+		var fingerSize = 50;
+		var fingerColor = 'rgba(255, 0, 0, 0.4)';
+
+
+		Kalm.adapters.register('ws', ws);
+
+    var client = new Kalm.Client({
+	    hostname: 'http://127.0.0.1',	// Put your server addr
+	    port: 3000,
+	    adapter: 'ws',
+	    channels: {
+		    positionEvent: function(data, socket) {
+			    // Need to update the position of user X to position Y 
+			    if (data.id !== client.id) {
+			    	fingerPositions[data.id] = data;
+			    }
+		    },
+		    handshake: function(data) {
+		    	// Client gets assigned an id when connecting to the server
+    			client.id = data;
+    			console.log('You are client #' + client.id);
+    		}
+		  }
+    });
+
+    // Register mouse mouvements
+    window.addEventListener('mousemove', function(event) {
+    	fingerPositions[client.id] = {
+    		id: client.id,
+    		x: event.clientX,
+    		y: event.clientY
+    	};
+
+    	client.sendOnce('positionEvent', fingerPositions[client.id]);
+    });
+
+    // Draw loop
+    function draw() {
+    	setTimeout(draw, 1000/120);	// 120 FPS
+    	canvas.width = window.innerWidth;
+    	canvas.height = window.innerHeight;
+    	ctx.fillStyle = fingerColor;
+    	for (var finger in fingerPositions) {
+    		ctx.arc(fingerPositions[finger].x, fingerPositions[finger].y, fingerSize*0.5, 0, 2*Math.PI, false);
+    	}
+    	ctx.closePath();
+      ctx.fill();
+    }
+
+    draw();
+	});
+</script>
