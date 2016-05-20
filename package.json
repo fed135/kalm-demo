@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/fed135/kalm-demo#readme",
   "dependencies": {
-    "kalm": "git@github.com:fed135/Kalm.git#v1.0.0",
+    "kalm": "git+https://github.com/fed135/Kalm.git#v1.0.0",
     "kalm-websocket": "1.1.x"
   }
 }
