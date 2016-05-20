@@ -1,33 +1,25 @@
 /**
- * Kalm Microservices example
+ * Kalm Messenging queue example
  */
 
 'use strict';
 
 /* Requires ------------------------------------------------------------------*/
 
-var ms = require('./server/kalm-node'); 
-
-/* Local variables -----------------------------------------------------------*/
-
-var config = {
-	services: ['foo'],
-	keeper: {
-		hostname: '0.0.0.0',
-		port: 3000,
-		adapter: 'tcp'
-	},
-	kalm: {
-		hostname: 'http://127.0.0.1',
-		port: 8080,
-		adapter: 'ws'
-	}
-};
+var MQ = require('./server/kalm-mq'); 
 
 /* Init ----------------------------------------------------------------------*/
 
-// Adds a keeper to the list of services, then instantiates them
-config.services.unshift('keeper');
-config.services.forEach(function(s) {
-	new ms(config, s);
+new MQ({
+	listeners: [
+		{
+				adapter: 'ipc',
+				port: 3000,
+				encoder: 'json'
+		},
+		{
+				adapter: 'tcp',
+				port: 4000
+		}
+	]
 });

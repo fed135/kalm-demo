@@ -7,8 +7,7 @@
 /* Requires ------------------------------------------------------------------*/
 
 var server = require('./server');
-var config = require('./config');
 
 /* Init ----------------------------------------------------------------------*/
 
-server.start(config);
+server.start();
