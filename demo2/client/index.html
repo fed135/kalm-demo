@@ -1,239 +1,28 @@
-<!--
-	This demo was built quickly, please disregard this horrible hunk of trash code
--->
+<!doctype HTML>
+<html lang="en">
+	<head>
+		<title>Kalm Demo</title>
+		<link rel="stylesheet" href="css/main.css" />
+	</head>
+	<body>
+		<div id="global-wrapper">
+			<div id="canvas"></div>
+			<div id="ui">
+				<div id="cursor"></div>
+				<div id="menu">
+					<div id="colorsMenu"></div>
+					<div id="sizesMenu"></div>
+				</div>
+			</div>
+			<img id="rotate-img" src="assets/rotate.jpg" style="display:none;"/>
+		</div>
 
-<style>
-	* {
-		margin: 0px;
-		padding: 0px;
-	} 
-
-	.white { background-color: white; }
-	.grey { background-color: grey; }
-	.black { background-color: black; }
-	.brown { background-color: brown; }
-	.red { background-color: red; }
-	.orange { background-color: orange; }
-	.yellow { background-color: yellow; }
-	.green { background-color: green; }
-	.blue { background-color: blue; }
-	.cyan { background-color: cyan; }
-	.purple { background-color: purple; }
-	.pink { background-color: pink; }
-
-	.dot { background-color: black; }
-
-	.s20 .dot { width: 20px; height: 20px; }
-	.s40 .dot { width: 40px; height: 40px; }
-	.s60 .dot { width: 60px; height: 60px; }
-
-	#canvas {
-		cursor: none;
-	}
-
-	.color {
-		width: 48px;
-		height: 48px;
-		border-radius: 8px;
-		border: 2px solid white;
-		box-shadow: inset 0px 0px 2px rgba(0,0,0,0.4), 0px 0px 2px rgba(0,0,0,0.4);
-		cursor: pointer;
-	}
-
-	#cursor {
-		position: absolute;
-		z-index: 3;
-		border-radius: 50%;
-		border: 2px solid black;
-		box-shadow: inset 0px 0px 2px rgba(255,255,255,0.7), 0px 0px 2px rgba(255,255,255,0.7);
-		pointer-events: none;
-	}
-
-	#ui {
-		position: absolute;
-		z-index: 2;
-	}
-
-	#stats-wrapper {
-		position: absolute;
-		z-index: 4;
-		background-color: rgba(0,0,0,0.4);
-		color: white;
-		text-shadow: 1px 1px 0px rgba(0,0,0,0.4);
-		right:0px;
-		bottom:0px;
-		padding:10px;
-	}
-</style>
-<canvas id="canvas" style="width:100%;height:100%;position:absolute;top:0;bottom:0;left:0;right:0;"></canvas>
-<div id="ui">
-	<div id="cursor"></div>
-	<div id="menu">
-		<div id="colorsMenu"></div>
-		<div id="sizesMenu"></div>
-	</div>
-</div>
-<div id="stats-wrapper">
-	<div id="stats"></div>
-	<div id="fps"></div>
-</div>
-
-<script src="../../libs/require.js"></script>
-<script src="../../libs/kalm.min.js"></script>
-<script src="../../libs/kalm-websocket.min.js"></script>
-<script>
-	require(['kalm', 'kalm-websocket'], function(Kalm, ws) {
-
-		var colorsMenu = document.getElementById('colorsMenu');
-		var sizesMenu = document.getElementById('sizesMenu');
-		var statsOut = document.getElementById('stats');
-		var fpsOut = document.getElementById('fps');
-		var canvas = document.getElementById('canvas');
-		var cursor = document.getElementById('cursor');
-		var ctx = canvas.getContext('2d');
-		var colors = [
-			'white',
-			'grey',
-			'black',
-			'brown',
-			'red',
-			'orange',
-			'yellow',
-			'green',
-			'blue',
-			'cyan',
-			'purple',
-			'pink'
-		];
-		var sizes = [
-			20,
-			40,
-			60
-		];
-
-		var fingerPos = {x:0, y:0};
-
-		var totalLatency = 0;
-		var draws = 0;
-		var frames = 0;
-		var framesTimer = setTimeout(fpsCount, 1000);
-
-		function fpsCount() {
-			framesTimer = setTimeout(fpsCount, 1000);
-			fpsOut.innerHTML = 'FPS: ' + frames;
-			statsOut.innerHTML = 'Latency: ' + Math.floor(totalLatency/(draws || 1)) + 'ms';
-			frames = 0;
-			draws = 0;
-			totalLatency = 0;
-		}
-
-		colors.forEach(function(color) {
-			var node = document.createElement('div');
-			node.className = 'color ' + color;
-			node.onclick = function() {
-				fingerColor = color;
-			};
-			colorsMenu.appendChild(node);
-		});
-
-		sizes.forEach(function(size) {
-			var node = document.createElement('div');
-			node.className = 'size s' + size;
-			node.onclick = function() {
-				fingerSize = size;
-			};
-			sizesMenu.appendChild(node);
-		});
-
-		
-		var fingerPositions = [];
-		var fingerSize = sizes[0];
-		var fingerColor = colors[4];
-		var mousedown = false;
-
-		Kalm.adapters.register('ws', ws);
-
-    var client = new Kalm.Client({
-	    hostname: 'http://127.0.0.1',	// Put your server addr
-	    port: 3000,
-	    adapter: 'ws',
-	    channels: {
-		    handshake: function(data) {
-		    	// Client gets assigned an id when connecting to the server
-    			client.id = data;
-    			console.log('You are client #' + client.id);
-    		}
-		  }
-    });
-
-    client.subscribe('positionEvent', function(data, socket) {
-		  // Need to update the position of user X to position Y 
-		  if (data.id !== client.id) {
-		  	fingerPositions.push(data);
-		  }
-		}, {delay: 0});
-
-    // Register mouse mouvements
-    window.addEventListener('mousemove', function(event) {
-    	fingerPos.x = event.clientX;
-    	fingerPos.y = event.clientY;
-	    
-    	return false;
-    });
-
-    window.addEventListener('mousedown', function(event) {
-    	mousedown = true;
-    });
-
-    window.addEventListener('mouseup', function(event) {
-    	mousedown = false;
-    })
-
-    // Draw loop
-    function draw() {
-    	draws += fingerPositions.length;
-    	var live = Date.now();
-
-    	fingerPositions.forEach(function(finger) {
-    		totalLatency += (live - finger.timestamp);
-    	});
-
-    	setTimeout(draw, 1000/120);	// 120 FPS
-
-    	cursor.style.backgroundColor = fingerColor;
-    	cursor.style.height = cursor.style.width = fingerSize;
-    	cursor.style.top = (fingerPos.y - (fingerSize * 0.5)) + 'px';
-    	cursor.style.left = (fingerPos.x - (fingerSize * 0.5)) + 'px';
-
-    	if (mousedown) {
-	    	fingerPositions.push({
-	    		id: client.id,
-	    		x: fingerPos.x,
-	    		y: fingerPos.y,
-	    		color: fingerColor,
-	    		size: fingerSize,
-	    		timestamp: Date.now()
-	    	});
-
-	    	client.send('positionEvent', fingerPositions[fingerPositions.length -1]);
-	    }
-    	
-    	fingerPositions.forEach(function(finger) {
-    		if ((finger.id === client.id && mousedown) || finger.id !== client.id) {
-    			ctx.beginPath();
-    			ctx.fillStyle = finger.color;
-    			ctx.arc(finger.x, finger.y, fingerSize*0.5, 0, 2*Math.PI, false);
-    			ctx.closePath();
-      		ctx.fill();
-    		}
-    	});
-    	
-      fingerPositions.length = 0;
-      frames++;
-    }
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    draw();
-	});
-</script>
+		<script src="../../libs/require.js"></script>
+		<script src="../../libs/Arstider.min.js"></script>
+		<script src="../../libs/kalm.min.js"></script>
+		<script src="../../libs/kalm-websocket.min.js"></script>
+		<script src="js/config.js"></script>
+		<script src="js/canvas.js"></script>
+		<script src="js/main.js"></script>
+	</body>
+</html>

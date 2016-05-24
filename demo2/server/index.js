@@ -26,7 +26,7 @@ function start(config) {
   var server = new Kalm.Server({
 	  port: 3000,
 	  adapter: 'ws',
-	  tick: 0
+	  tick: (1000/120)
 	});
 
   server.on('connect', function(socket) {
@@ -46,8 +46,7 @@ function start(config) {
 	 		size: data.size,
 	 		id: data.id,
 	 		x: data.x,
-	 		y: data.y,
-	 		timestamp: data.timestamp
+	 		y: data.y
 	 	});
 	}, {serverTick: true});
 }
