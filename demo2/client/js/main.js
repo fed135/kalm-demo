@@ -20,40 +20,6 @@ function(Browser, Engine, Viewport, Events){
 		globalWrapper.style.width=Viewport.maxWidth + 'px';
 	}
 	goFullSize();
-	
-	var rotateImg = document.getElementById('rotate-img');
-
-	if(Browser.isMobile){
-		Events.bind('Viewport.resize', function(){
-			if(Viewport.orientation == 'landscape') rotateImg.show();
-			else if(Viewport.orientation == 'portrait') rotateImg.hide();
-		});
-	}
-	if(Browser.isMobile && Browser.platform != 'ipad'){
-		var fillSave = null;
-			
-		Events.bind('Viewport.resize', function(){
-			if(Viewport.orientation == 'landscape'){
-				if(fillSave == null) fillSave = Engine.context.fillStyle;
-				Viewport.unsupportedOrientation = true;
-				Engine.stop();
-					
-				Viewport.tag.style.width = window.innerWidth + 'px';
-				Viewport.tag.style.height = window.innerHeight + 'px';
-				Viewport.tag.width = window.innerWidth;
-				Viewport.tag.height = window.innerHeight;
-							
-				Viewport.tag.style.left = '0px';
-				Viewport.tag.style.top = '0px';
-				Viewport.tag.style.position = 'fixed';
-			}
-			else if(Viewport.orientation == 'portrait'){				
-				if(fillSave!= null) Engine.context.fillStyle = fillSave;
-				Viewport.unsupportedOrientation = false;
-				Engine.play();
-			}
-		});
-	}
 
 	//Boot up the engine
 	Engine.start('canvas', true);
