@@ -18,5 +18,6 @@ define('js/config', {
 		40,
 		60
 	],
-	serverUrl: 'http://52.90.77.154'
+	// serverUrl: 'http://52.90.77.154'
+	serverUrl: 'http://localhost'
 });

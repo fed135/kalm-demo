@@ -6,15 +6,17 @@
 
 /* Requires ------------------------------------------------------------------*/
 
-//var Kalm = require('kalm');
-var Kalm = require('/home/frederic/Documents/workspace/Kalm');
+var Kalm = require('kalm');
+var msgpack = require('kalm-msgpack');
 
 /* Init ----------------------------------------------------------------------*/
+
+Kalm.encoders.register('msgpack', msgpack);
 
 var client = new Kalm.Client({
 	adapter: 'ipc',
 	port: 3000,
-	encoder: 'json'
+	encoder: 'msgpack'
 });
 
 client.subscribe('foo', (payload) => console.log(payload));

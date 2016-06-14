@@ -25,8 +25,8 @@ function(Browser, Engine, Viewport, Events){
 	Engine.start('canvas', true);
 
 	Viewport._resize();
-	//Double-up-animation speed. We don't want this blowing up ;)
-	Arstider.setFPS(120);
+	//x4 Update, may want to %4 for draws
+	Arstider.setFPS(60);
 
 	Engine.loadScreen({
 		name: 'js/canvas',

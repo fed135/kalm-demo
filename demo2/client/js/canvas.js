@@ -54,12 +54,12 @@ define('js/canvas', [
 				}
 			});
 
-			client.subscribe('positionEvent', function(data, socket) {
+			client.subscribe('positionEvent', function(data) {
 				// Need to update the position of user X to position Y 
 				if (data.id !== client.id) {
 					fingerPositions.push(data);
 				}
-			}, {delay: (1000/60)});	// Bundles multiple fingers
+			}, {delay: 1000/60});	// Bundles multiple fingers
 		}
 
 		return {
@@ -95,8 +95,8 @@ define('js/canvas', [
 				var ctx = Engine.context;
 				fingerPositions.forEach(function(finger) {
 					ctx.beginPath();
-					ctx.fillStyle = fingerData.color;
-					ctx.arc(finger.x, finger.y, fingerData.size*0.5, 0, 2*Math.PI, false);
+					ctx.fillStyle = finger.color;
+					ctx.arc(finger.x, finger.y, finger.size*0.5, 0, 2*Math.PI, false);
 					ctx.closePath();
 					ctx.fill();
 				});

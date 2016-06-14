@@ -15,11 +15,14 @@ new MQ({
 		{
 				adapter: 'ipc',
 				port: 3000,
-				encoder: 'json'
+				encoder: 'msgpack',
+				tick: 200
 		},
 		{
 				adapter: 'tcp',
-				port: 4000
+				port: 4000,
+				tick: 300,
+				encoder: 'json'
 		}
 	]
 });

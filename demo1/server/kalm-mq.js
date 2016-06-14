@@ -7,6 +7,7 @@
 /* Requires ------------------------------------------------------------------*/
 
 var Kalm = require('kalm');
+var msgpack = require('kalm-msgpack');
 
 /* Methods -------------------------------------------------------------------*/
 
@@ -16,6 +17,7 @@ class MQ {
 	 * MQ constructor
 	 */
 	constructor(options) {
+		Kalm.encoders.register('msgpack', msgpack);
 		this.listeners = options.listeners.map(this.createServer.bind(this));
 	}
 
@@ -28,7 +30,8 @@ class MQ {
 	register(payload, reply, channel) {
 		this.listeners.forEach((listener) => listener.subscribe(
 			payload, 
-			this.broadcast.bind(this)
+			this.broadcast.bind(this),
+			{ serverTick: true }
 		));
 	}
 
